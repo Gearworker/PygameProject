@@ -1,3 +1,9 @@
-import pygame
+from game import start_screen, game
 
-print('smth')
+
+def main():
+    name = start_screen()
+    game(name)
+
+
+main()

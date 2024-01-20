@@ -1,7 +1,11 @@
-
-import pygame,random
+import pygame
+import random
 import time
 from os import path
+import sys
+import sqlite3
+
+
 pygame.init()
 width=500
 height=500
@@ -27,9 +31,11 @@ clock=pygame.time.Clock()
 
 font_style = pygame.font.SysFont(None, 32)
 scorefont=pygame.font.SysFont("comicsansms",25)
-def score(score):
-    value=scorefont.render("Ваш счёт:"+str(score),True,red)
-    screen.blit(value,[0,0])
+def score(score, name):
+    name = scorefont.render("Ваше имя: " + name, True, red)
+    value=scorefont.render("Ваш счёт: "+str(score),True,red)
+    screen.blit(value, [0, 0])
+    screen.blit(name, [0, 22])
 def message(msg, color):
 
     mes = font_style.render(msg, True, color)
@@ -41,7 +47,7 @@ def new_block (snake_body):
         pygame.draw.rect(screen,white, [x[0], x[1], 20, 20])
 
 pygame.display.set_caption('змейка')
-def k():
+def game(name):
     snake_speed = 15
     x = 0
     y = 0
@@ -52,7 +58,6 @@ def k():
     run = True
     foodx = round(random.randrange(0, width - 30) / 10) * 10
     foody = round(random.randrange(0, height - 30) / 10) * 10
-
     food_img =[pygame.image.load(path.join(img_dir, 'еда.jpg')).convert()]
     food = pygame.transform.scale(random.choice(food_img),(20,20))
     food_react=food.get_rect(x=foodx,y=foody)
@@ -65,7 +70,7 @@ def k():
 
             screen.fill(blue)
 
-            message("Нажми 'C'-продолжить или 'Q'-выход", red)
+            message("'C'-продолжить,'Q'-выход,'R' - таблица рекордов", red)
 
             pygame.display.update()
 
@@ -79,7 +84,10 @@ def k():
                         end = False
 
                     if event.key == pygame.K_c:
-                        k()
+                        game(name)
+
+                    if event.key == pygame.K_r:
+                        record_table(length - 1, name)
 
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
@@ -130,7 +138,7 @@ def k():
             del snake_body[0]
 
         new_block(snake_body)
-        score(length-1)
+        score(length-1, name)
         pygame.display.update()
         if xcor == foodx and ycor == foody:
             foodx = round(random.randrange(0, width - 30) / 10) * 10
@@ -152,4 +160,52 @@ def k():
 
     time.sleep(1)
     pygame.quit()
-k()
+
+
+def start_screen():
+    pygame.init()
+    clock = pygame.time.Clock()
+    screen = pygame.display.set_mode([600, 500])
+    base_font = pygame.font.Font(None, 32)
+    user_text = ''
+    input_rect = pygame.Rect(200, 200, 140, 32)
+    color = pygame.Color('black')
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    user_text = user_text[:-1]
+                elif event.key == pygame.K_RETURN:
+                    return user_text
+                else:
+                    user_text += event.unicode
+        screen.fill((255, 255, 255))
+        pygame.draw.rect(screen, color, input_rect)
+        text_surface = base_font.render(user_text, True, (255, 255, 255))
+        screen.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
+        input_rect.w = max(100, text_surface.get_width() + 10)
+        pygame.display.flip()
+        clock.tick(60)
+
+
+def record_table(scores, name):
+    pygame.init()
+    scree = pygame.display.set_mode([600, 500])
+    base_font = pygame.font.Font(None, 32)
+    user_text = name + ' ' + str(scores)
+    input_rect = pygame.Rect(200, 200, 140, 32)
+    color = pygame.Color('white')
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+        scree.fill((255, 255, 255))
+        pygame.draw.rect(scree, color, input_rect)
+        text_surface = base_font.render(user_text, True, (0, 0, 0))
+        scree.blit(text_surface, (0, 0))
+        input_rect.w = max(100, text_surface.get_width() + 10)
+        pygame.display.flip()
