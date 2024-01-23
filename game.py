@@ -4,6 +4,7 @@ import time
 from os import path
 import sys
 import sqlite3
+from datetime import datetime
 
 
 pygame.init()
@@ -64,6 +65,8 @@ def game(name):
     pygame.mixer.music.play()
     pygame.mixer.music.set_volume(0.1)
     end=False
+    connection = sqlite3.connect('records.sqlite')
+    cursor = connection.cursor()
     while run:
 
         while end == True:
@@ -79,15 +82,26 @@ def game(name):
                 if event.type == pygame.KEYDOWN:
 
                     if event.key == pygame.K_q:
+                        sub = datetime.now()
+                        game_date = sub.strftime("%H:%M:%S %D")
+                        cursor.execute('''INSERT INTO Records (name, score, date) VALUES (?, ?, ?)''',
+                                       (name, length - 1, game_date))
+                        connection.commit()
+                        connection.close()
                         run = False
-
                         end = False
 
                     if event.key == pygame.K_c:
                         game(name)
 
                     if event.key == pygame.K_r:
-                        record_table(length - 1, name)
+                        sub = datetime.now()
+                        game_date = sub.strftime("%H:%M:%S %D")
+                        cursor.execute('''INSERT INTO Records (name, score, date) VALUES (?, ?, ?)''',
+                                       (name, length - 1, game_date))
+                        connection.commit()
+                        connection.close()
+                        record_table(name, length - 1, game_date)
 
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
@@ -191,21 +205,39 @@ def start_screen():
         clock.tick(60)
 
 
-def record_table(scores, name):
+def record_table(name, scores, date):
     pygame.init()
     scree = pygame.display.set_mode([600, 500])
     base_font = pygame.font.Font(None, 32)
-    user_text = name + ' ' + str(scores)
+    connection = sqlite3.connect('records.sqlite')
+    cursor = connection.cursor()
+    table = cursor.execute('''SELECT * FROM Records WHERE score - ? > 0 or ? - score > 0''',
+                           (scores, scores)).fetchall()
+    current_user = (name, scores, date)
+    table.append(current_user)
+    table = sorted(table, key=lambda l: l[1], reverse=True)
+    table = [i for i in enumerate(table, 1)]
+    print(table)
+    for i in table:
+        if i[1] == current_user:
+            current_user = i
+            break
     input_rect = pygame.Rect(200, 200, 140, 32)
-    color = pygame.Color('white')
+    index = table.index(current_user)
+    to_render = table[index - 3:index + 4]
+    print(to_render)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+        text_surface = base_font.render('', True, (0, 0, 0))
         scree.fill((255, 255, 255))
-        pygame.draw.rect(scree, color, input_rect)
-        text_surface = base_font.render(user_text, True, (0, 0, 0))
-        scree.blit(text_surface, (0, 0))
+        c = 0
+        for i in to_render:
+            st = f'{i[0]}) {i[1][0]} {i[1][1]} {i[1][2]}'
+            text_surface = base_font.render(st, True, (0, 0, 0))
+            scree.blit(text_surface, (0, c * 25))
+            c += 1
         input_rect.w = max(100, text_surface.get_width() + 10)
         pygame.display.flip()
