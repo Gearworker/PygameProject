@@ -55,7 +55,7 @@ def messag(msg, color):
     screen.blit(mes, [width/2.6, height/2])
 
 
-def new_block(snake_body): # увеличение змейки
+def new_block(snake_body): #увеличение змейки
 
     for x in snake_body:
         pygame.draw.rect(screen, red, [x[0], x[1], 20, 20])
@@ -131,7 +131,7 @@ def game(name): # основаная функция игры с обработк
                         connection.close()
                         record_table(name, length - 1, game_date)
 
-        for event in pygame.event.get():
+        for event in pygame.event.get(): # обработка клавиш для управления змейкой
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.KEYDOWN:
