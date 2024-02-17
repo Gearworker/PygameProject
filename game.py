@@ -40,13 +40,13 @@ def score(scor, name):  # функция подсчета и вывода очк
     screen.blit(name, [0, 22])
 
 
-def message(msg, color):
+def message(msg, color): # вывод выбора при завершении игры
     mes = font_style.render(msg, True, color)
 
     screen.blit(mes, [width / 16, height / 2])
 
 
-def messag(msg, color):
+def messag(msg, color): # вывод при выходе из игры
     mes = font_style.render(msg, True, color)
 
     screen.blit(mes, [width / 2.6, height / 2])
