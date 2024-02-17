@@ -29,14 +29,13 @@ x = 0
 y = 0
 snake_speed = 15
 clock = pygame.time.Clock()
-
 font_style = pygame.font.SysFont(None, 32)
 scorefont = pygame.font.SysFont("comicsansms", 25)
 
 
-def score(score, name):  # функция подсчета и вывода очков во время игрового процесса
+def score(scor, name):  # функция подсчета и вывода очков во время игрового процесса
     name = scorefont.render("Ваше имя: " + name, True, red)
-    value = scorefont.render("Ваш счёт: " + str(score), True, red)
+    value = scorefont.render("Ваш счёт: " + str(scor), True, red)
     screen.blit(value, [0, 0])
     screen.blit(name, [0, 22])
 
@@ -55,14 +54,14 @@ def messag(msg, color):
 
 def new_block(snake_body):  # увеличение змейки
 
-    for x in snake_body:
-        pygame.draw.rect(screen, red, [x[0], x[1], 20, 20])
+    for i in snake_body:
+        pygame.draw.rect(screen, red, [i[0], i[1], 20, 20])
 
 
 pygame.display.set_caption('змейка')
 
 
-def load_image(name, colorkey=None):  # обработка изображений
+def load_image(name):  # обработка изображений
     fullname = os.path.join('foto', name)
     # если файл не существует, то выходим
     if not os.path.isfile(fullname):
@@ -74,18 +73,17 @@ def load_image(name, colorkey=None):  # обработка изображени�
 
 def game(name):  # основаная функция игры с обработкой игровых процессов
     global list_apple
-    snake_speed = 15
-    x = 0
-    y = 0
-    xcor = width / 2
-    ycor = height / 2
+    snake_speeds = 15
+    xx = 0
+    yy = 0
+    xcords = width / 2
+    ycords = height / 2
     snake_body = []
     length = 1
     run = True
     foodx = round(random.randrange(0, width - 30) / 10) * 10
     foody = round(random.randrange(0, height - 30) / 10) * 10
     food_img = [pygame.image.load(path.join(img_dir, list_apple[random.randint(0, 2)])).convert_alpha()]
-    # food_img = load_image(list_apple[random.randint(0, 2)])
     food = pygame.transform.scale(random.choice(food_img), (20, 20))
     food_react = food.get_rect(x=foodx, y=foody)
     pygame.mixer.music.play()
@@ -133,34 +131,27 @@ def game(name):  # основаная функция игры с обработ�
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.KEYDOWN:
-
                 if event.key == pygame.K_LEFT:
-                    x = -10
-                    y = 0
-
+                    xx = -10
+                    yy = 0
                 elif event.key == pygame.K_RIGHT:
-                    x = 10
-                    y = 0
-
+                    xx = 10
+                    yy = 0
                 elif event.key == pygame.K_UP:
-                    x = 0
-                    y = -10
-
+                    xx = 0
+                    yy = -10
                 elif event.key == pygame.K_DOWN:
-                    x = 0
-                    y = 10
-
-        if xcor > 600 or xcor < 0 or ycor >= 500 or ycor < 0:  # обработка координат змейки и того что она не  вышла с экрана
+                    xx = 0
+                    yy = 10
+        if xcords > 600 or xcords < 0 or ycords >= 500 or ycords < 0:  # обработка координат змейки, отслеживание границ
             end = True
-        xcor += x
-        ycor += y
+        xcords += xx
+        ycords += yy
 
         screen.fill(blue)
         screen.blit(bg, bg_react)
         screen.blit(food, food_react)
-        snake_head = []
-        snake_head.append(xcor)
-        snake_head.append(ycor)
+        snake_head = [xcords, ycords]
         snake_body.append(snake_head)
 
         if len(snake_body) > length:
@@ -169,33 +160,29 @@ def game(name):  # основаная функция игры с обработ�
         new_block(snake_body)
         score(length - 1, name)
         pygame.display.update()
-        if xcor == foodx and ycor == foody or xcor == foodx + 10 and ycor == foody + 10 or xcor == foodx - 10 and ycor == foody + 10 or xcor == foodx - 10 and ycor == foody - 10 \
-                or xcor == foodx + 10 and ycor == foody - 10:  # обработка поедания еды змейкой
+        if xcords == foodx and ycords == foody or xcords == foodx + 10 and ycords == foody + 10 or \
+                xcords == foodx - 10 and ycords == foody + 10 or xcords == foodx - 10 and ycords == foody - 10 \
+                or xcords == foodx + 10 and ycords == foody - 10:  # обработка поедания еды змейкой
             foodx = round(random.randrange(0, width - 30) / 10) * 10
-
             foody = round(random.randrange(0, height - 30) / 10) * 10
-
             food_img = [pygame.image.load(path.join(img_dir, list_apple[random.randint(0, 2)])).convert_alpha()]
-
             food = pygame.transform.scale(random.choice(food_img), (20, 20))
             food_react = food.get_rect(x=foodx, y=foody)
             screen.blit(food, food_react)
             length += 1
             am.play()
         pygame.display.flip()
-        clock.tick(snake_speed)
+        clock.tick(snake_speeds)
     messag('Ты проиграл!', red)
-
     pygame.display.update()
-
     time.sleep(1)
     pygame.quit()
 
 
 def start_screen():  # начальный экран с вводом никнейма
     pygame.init()
-    clock = pygame.time.Clock()
-    screen = pygame.display.set_mode([600, 500])
+    clocks = pygame.time.Clock()
+    screens = pygame.display.set_mode([600, 500])
     base_font = pygame.font.Font(None, 32)
     user_text = ''
     input_rect = pygame.Rect(200, 200, 140, 32)
@@ -212,13 +199,13 @@ def start_screen():  # начальный экран с вводом никне�
                     return user_text
                 else:
                     user_text += event.unicode
-        screen.fill((255, 255, 255))
-        pygame.draw.rect(screen, color, input_rect)
+        screens.fill((255, 255, 255))
+        pygame.draw.rect(screens, color, input_rect)
         text_surface = base_font.render(user_text, True, (255, 255, 255))
-        screen.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
+        screens.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
         input_rect.w = max(100, text_surface.get_width() + 10)
         pygame.display.flip()
-        clock.tick(60)
+        clocks.tick(60)
 
 
 def record_table(name, scores, date):  # вывод таблицы с результатами
