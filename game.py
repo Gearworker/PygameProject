@@ -97,7 +97,7 @@ def game(name): # основаная функция игры с обработк
     cursor = connection.cursor()
     while run:
 
-        while end == True: #обработка завершения игры
+        while end: #обработка завершения игры
 
             screen.fill(blue)
 
