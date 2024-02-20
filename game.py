@@ -224,12 +224,12 @@ def record_table(name, scores, date):  # вывод таблицы с резул
     index = table.index(current_user)
     table = [i for i in enumerate(table, 1)]
     input_rect = pygame.Rect(200, 200, 140, 32)
-    if index in range(0, 5):
-        to_render = table[:index + 1] + table[index + 1:index + 5]
-    elif index in range(len(table) - 5, len(table)):
-        to_render = table[index - 5:index + 1] + table[index + 1:]
+    if index in range(0, 10):
+        to_render = table[:index + 1] + table[index + 1:index + 10]
+    elif index in range(len(table) - 10, len(table)):
+        to_render = table[index - 10:index + 1] + table[index + 1:]
     else:
-        to_render = table[index - 5:index + 1] + table[index + 1:index + 6]
+        to_render = table[index - 10:index + 1] + table[index + 1:index + 11]
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
