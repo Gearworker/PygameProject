@@ -29,7 +29,7 @@ x = 0
 y = 0
 snake_speed = 15
 clock = pygame.time.Clock()
-font_style = pygame.font.SysFont(None, 32)
+font_style = pygame.font.SysFont('', 32)
 scorefont = pygame.font.SysFont("comicsansms", 25)
 
 
