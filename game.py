@@ -237,7 +237,7 @@ def record_table(name, scores, date):  # вывод таблицы с резул
         scree.fill((255, 255, 255))
         c = 0
         for i in to_render:
-            st = f'{i[0]}) {i[1][0]} {i[1][1]} {i[1][2]}'
+            st = f'{i[0]}) [{i[1][0]}] [{i[1][1]}] [{i[1][2]}]'
             text_surface = base_font.render(st, True, (0, 0, 0))
             scree.blit(text_surface, (0, c * 25))
             c += 1
