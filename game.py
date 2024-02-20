@@ -34,19 +34,19 @@ scorefont = pygame.font.SysFont("comicsansms", 25)
 
 
 def score(scor, name):  # функция подсчета и вывода очков во время игрового процесса
-    name = scorefont.render("Ваше имя: " + name, True, red)
-    value = scorefont.render("Ваш счёт: " + str(scor), True, red)
+    name = scorefont.render("Ваше имя: " + name, True, black)
+    value = scorefont.render("Ваш счёт: " + str(scor), True, black)
     screen.blit(value, [0, 0])
     screen.blit(name, [0, 22])
 
 
-def message(msg, color): # вывод выбора при завершении игры
+def message(msg, color):  # вывод выбора при завершении игры
     mes = font_style.render(msg, True, color)
 
     screen.blit(mes, [width / 16, height / 2])
 
 
-def messag(msg, color): # вывод при выходе из игры
+def messag(msg, color):  # вывод при выходе из игры
     mes = font_style.render(msg, True, color)
 
     screen.blit(mes, [width / 2.6, height / 2])
@@ -219,16 +219,15 @@ def record_table(name, scores, date):  # вывод таблицы с резул
     current_user = (name, scores, date)
     table.append(current_user)
     table = sorted(table, key=lambda l: l[1], reverse=True)
-    table = [i for i in enumerate(table, 1)]
-    print(table)
-    for i in table:
-        if i[1] == current_user:
-            current_user = i
-            break
-    input_rect = pygame.Rect(200, 200, 140, 32)
     index = table.index(current_user)
-    to_render = table[index - 3:index + 4]
-    print(to_render)
+    table = [i for i in enumerate(table, 1)]
+    input_rect = pygame.Rect(200, 200, 140, 32)
+    if index in range(0, 5):
+        to_render = table[:index + 1] + table[index + 1:index + 5]
+    elif index in range(len(table) - 5, len(table)):
+        to_render = table[index - 5:index + 1] + table[index + 1:]
+    else:
+        to_render = table[index - 5:index + 1] + table[index + 1:index + 6]
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
