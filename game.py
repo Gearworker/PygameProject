@@ -173,7 +173,7 @@ def game(name):  # основаная функция игры с обработ�
             am.play()
         pygame.display.flip()
         clock.tick(snake_speeds)
-    messag('Ты проиграл!', red)
+    messag('Ты проиграл!', black)
     pygame.display.update()
     time.sleep(1)
     pygame.quit()
@@ -185,7 +185,7 @@ def start_screen():  # начальный экран с вводом никне�
     screens = pygame.display.set_mode([600, 500])
     base_font = pygame.font.Font(None, 32)
     user_text = ''
-    input_rect = pygame.Rect(200, 200, 140, 32)
+    input_rect = pygame.Rect(10, 200, 140, 32)
     color = pygame.Color('black')
     while True:
         for event in pygame.event.get():
@@ -201,7 +201,9 @@ def start_screen():  # начальный экран с вводом никне�
                     user_text += event.unicode
         screens.fill((255, 255, 255))
         pygame.draw.rect(screens, color, input_rect)
+        text_surface1 = base_font.render('Введите имя', True, (0, 0, 0))
         text_surface = base_font.render(user_text, True, (255, 255, 255))
+        screens.blit(text_surface1, (10, 175))
         screens.blit(text_surface, (input_rect.x + 5, input_rect.y + 5))
         input_rect.w = max(100, text_surface.get_width() + 10)
         pygame.display.flip()
@@ -210,7 +212,7 @@ def start_screen():  # начальный экран с вводом никне�
 
 def record_table(name, scores, date):  # вывод таблицы с результатами
     pygame.init()
-    scree = pygame.display.set_mode([600, 500])
+    scree = pygame.display.set_mode([800, 600])
     base_font = pygame.font.Font(None, 32)
     connection = sqlite3.connect('records.sqlite')
     cursor = connection.cursor()
